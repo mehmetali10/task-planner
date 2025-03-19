@@ -9,11 +9,9 @@ import (
 
 type Service interface {
 	CreateTask(ctx context.Context, req payload.CreateTaskRequest) (payload.CreateTaskResponse, error)
-	GetTask(ctx context.Context, req payload.GetTaskRequest) (payload.GetTaskResponse, error)
 	ListTasks(ctx context.Context, req payload.ListTasksRequest) (payload.ListTasksResponse, error)
 
 	ScheduleAssaignments(ctx context.Context, req payload.ScheduleAssignmentRequest) (payload.ScheduleAssignmentResponse, error)
-	ListAssignments(ctx context.Context, req payload.ListAssignmentsRequest) (payload.ListAssignmentsResponse, error)
 
 	ListDevelopers(ctx context.Context, req payload.ListDevelopersRequest) (payload.ListDevelopersResponse, error)
 }
@@ -35,16 +33,6 @@ func (s *service) ScheduleAssaignments(ctx context.Context, req payload.Schedule
 
 // CreateTask implements Service.
 func (s *service) CreateTask(ctx context.Context, req payload.CreateTaskRequest) (payload.CreateTaskResponse, error) {
-	panic("unimplemented")
-}
-
-// GetTask implements Service.
-func (s *service) GetTask(ctx context.Context, req payload.GetTaskRequest) (payload.GetTaskResponse, error) {
-	panic("unimplemented")
-}
-
-// ListAssignments implements Service.
-func (s *service) ListAssignments(ctx context.Context, req payload.ListAssignmentsRequest) (payload.ListAssignmentsResponse, error) {
 	panic("unimplemented")
 }
 

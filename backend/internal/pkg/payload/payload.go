@@ -3,37 +3,30 @@ package payload
 type (
 	Task struct {
 		ID         uint64 `json:"id"`
-		ExternalID uint64 `json:"external_id"`
+		ExternalID uint64 `json:"externalId"`
 		Name       string `json:"name"`
 		Duration   int    `json:"duration"`
 		Difficulty int    `json:"difficulty"`
 		Provider   string `json:"provider"`
-		CreatedAt  string `json:"created_at"`
-		UpdatedAt  string `json:"updated_at"`
+		CreatedAt  string `json:"createdAt"`
+		UpdatedAt  string `json:"updatedAt"`
 	}
 
 	CreateTaskRequest struct {
-		ExternalID uint64 `json:"external_id"`
-		Name       string `json:"name"`
-		Duration   int    `json:"duration"`
-		Difficulty int    `json:"difficulty"`
-		Provider   string `json:"provider"`
+		ExternalID uint   `json:"externalId" validate:"required"`
+		Name       string `json:"name" validate:"required,min=3,max=100"`
+		Duration   int    `json:"duration" validate:"required,min=1,max=1000"`
+		Difficulty int    `json:"difficulty" validate:"required,min=1,max=10"`
+		Provider   string `json:"provider" validate:"required,min=3,max=150"`
 	}
 	CreateTaskResponse struct {
-		ID        uint64 `json:"id"`
-		CreatedAt string `json:"created_at"`
-	}
-
-	GetTaskRequest struct {
-		ID uint64 `json:"id"`
-	}
-	GetTaskResponse struct {
-		Task Task `json:"task"`
+		ID        uint   `json:"id"`
+		CreatedAt string `json:"createdAt"`
 	}
 
 	ListTasksRequest struct {
-		Offset int `json:"offset"`
-		Limit  int `json:"limit"`
+		Offset int `json:"offset" validate:"min=0"`
+		Limit  int `json:"limit" validate:"min=1,max=100"`
 	}
 	ListTasksResponse struct {
 		Tasks []Task `json:"tasks"`
@@ -42,18 +35,16 @@ type (
 
 type (
 	Assignment struct {
-		ID          uint64 `json:"id"`
-		TaskID      uint64 `json:"task_id"`
-		DeveloperID uint64 `json:"developer_id"`
-		Week        int    `json:"week"`
-		Task        Task   `json:"task"`
-		Developer   Developer
-		CreatedAt   string `json:"created_at"`
-		UpdatedAt   string `json:"updated_at"`
+		ID          uint      `json:"id"`
+		TaskID      uint      `json:"taskId"`
+		DeveloperID uint      `json:"developerId"`
+		Task        Task      `json:"task"`
+		Developer   Developer `json:"developer"`
+		CreatedAt   string    `json:"createdAt"`
+		UpdatedAt   string    `json:"updatedAt"`
 	}
 
 	ScheduleAssignmentRequest struct {
-		Week int `json:"week"`
 	}
 	ScheduleAssignmentResponse struct {
 		Assignments []Assignment `json:"assignments"`
@@ -65,12 +56,12 @@ type (
 
 type (
 	Developer struct {
-		ID        uint64 `json:"id"`
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
+		ID        uint   `json:"id"`
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
 		Email     string `json:"email"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
+		CreatedAt string `json:"createdAt"`
+		UpdatedAt string `json:"updatedAt"`
 	}
 
 	ListDevelopersRequest  struct{}

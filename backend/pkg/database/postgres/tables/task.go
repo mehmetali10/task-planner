@@ -21,14 +21,12 @@ func (Task) TableName() string {
 	return "tb_tasks"
 }
 
-// BeforeCreate hook: Task oluşturulmadan önce çalışır.
 func (t *Task) BeforeCreate(tx *gorm.DB) (err error) {
 	t.CreatedAt = time.Now()
 	t.UpdatedAt = time.Now()
 	return
 }
 
-// BeforeUpdate hook: Task güncellenmeden önce çalışır.
 func (t *Task) BeforeUpdate(tx *gorm.DB) (err error) {
 	t.UpdatedAt = time.Now()
 	return
