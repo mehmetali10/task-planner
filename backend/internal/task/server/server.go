@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mehmetali10/task-planner/internal/task/config"
+	"github.com/mehmetali10/task-planner/internal/pkg/config"
 	"github.com/mehmetali10/task-planner/internal/task/handler"
 	"github.com/mehmetali10/task-planner/internal/task/migrate"
 	httpSwagger "github.com/swaggo/http-swagger"

@@ -5,11 +5,11 @@ import (
 
 	"github.com/mehmetali10/task-planner/pkg/log"
 
+	"github.com/mehmetali10/task-planner/internal/pkg/config"
+	"github.com/mehmetali10/task-planner/internal/pkg/database/postgres"
+	"github.com/mehmetali10/task-planner/internal/pkg/database/postgres/tables"
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
 	"github.com/mehmetali10/task-planner/internal/pkg/repository"
-	"github.com/mehmetali10/task-planner/internal/task/config"
-	"github.com/mehmetali10/task-planner/pkg/database/postgres"
-	"github.com/mehmetali10/task-planner/pkg/database/postgres/tables"
 )
 
 type PostgresRepo struct {

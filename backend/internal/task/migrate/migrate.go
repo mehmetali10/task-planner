@@ -1,8 +1,8 @@
 package migrate
 
 import (
-	"github.com/mehmetali10/task-planner/pkg/database/postgres"
-	"github.com/mehmetali10/task-planner/pkg/database/postgres/tables"
+	"github.com/mehmetali10/task-planner/internal/pkg/database/postgres"
+	"github.com/mehmetali10/task-planner/internal/pkg/database/postgres/tables"
 	"github.com/mehmetali10/task-planner/pkg/log"
 )
 

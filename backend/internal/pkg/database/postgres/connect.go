@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/mehmetali10/task-planner/internal/task/config"
+	"github.com/mehmetali10/task-planner/internal/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"

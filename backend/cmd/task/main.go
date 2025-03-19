@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/mehmetali10/task-planner/internal/pkg/config"
 	postgres_repository "github.com/mehmetali10/task-planner/internal/pkg/repository/postgres"
-	"github.com/mehmetali10/task-planner/internal/task/config"
 	"github.com/mehmetali10/task-planner/internal/task/handler"
 	"github.com/mehmetali10/task-planner/internal/task/server"
 	"github.com/mehmetali10/task-planner/internal/task/service"
