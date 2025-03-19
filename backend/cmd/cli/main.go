@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/mehmetali10/task-planner/internal/pkg/config"
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
@@ -16,7 +20,7 @@ import (
 )
 
 func main() {
-	logger := log.NewLogger("cli", "debug")
+	logger := log.NewLogger("cli", "trace")
 
 	if err := config.LoadConfig(); err != nil {
 		logger.Fatal(err.Error())
@@ -24,7 +28,7 @@ func main() {
 
 	migrate.MigrateAndSeed(logger)
 
-	var providers []string = []string{
+	providers := []string{
 		"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-one",
 		"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-two",
 	}
@@ -33,71 +37,88 @@ func main() {
 		logger.Fatal("No providers specified. Use the --providers flag to specify provider URLs.")
 	}
 
+	// Database connection
 	repo := postgresRepo.NewPostgresRepo()
 
-	for _, provider := range providers {
-		tasks, err := fetchTasksFromProvider(provider, logger)
-		if err != nil {
-			logger.Error("Error fetching tasks from provider %s: %v", provider, err)
-			continue
-		}
+	// Start Worker Pool
+	wp := NewWorkerPool(2, repo) // 2 workers
+	ctx, cancel := context.WithCancel(context.Background())
+	wp.Start(ctx)
 
-		for _, task := range tasks {
-			_, err := repo.CreateTask(context.Background(), task)
+	// Create a channel for OS signals
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	var wg sync.WaitGroup
+
+	// Run providers in parallel
+	wg.Add(len(providers))
+	for _, provider := range providers {
+		go func(provider string) {
+			defer wg.Done()
+			err := fetchAndProcessTasks(provider, logger, wp)
 			if err != nil {
-				logger.Error("Error creating task in database: %v", err)
-			} else {
-				logger.Info("Task created successfully: %+v", task)
+				logger.Error("Error processing tasks from provider %s: %v", provider, err)
 			}
-		}
+		}(provider)
 	}
 
+	// After all providers are processed, stop the workers
+	go func() {
+		wg.Wait() // Wait for providers to finish
+		logger.Info("All providers processed, waiting for workers to finish...")
+		wp.Stop() // Stop the workers
+		cancel()  // Cancel the context
+		logger.Info("Worker pool fully stopped. Exiting application.")
+		os.Exit(0) // Exit when all tasks are done
+	}()
+
+	// Graceful shutdown when receiving OS signal
+	<-sigChan
+	logger.Info("Received termination signal, shutting down...")
+	cancel()
+	wp.Stop()
+
+	logger.Info("Application terminated gracefully.")
 }
 
-func fetchTasksFromProvider(url string, logger log.Logger) ([]payload.CreateTaskRequest, error) {
+// Function to fetch data and send it to the WorkerPool
+func fetchAndProcessTasks(url string, logger log.Logger, wp *WorkerPool) error {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch data from %s: %w", url, err)
+		return fmt.Errorf("failed to fetch data from %s: %w", url, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("non-200 response from %s: %d", url, resp.StatusCode)
+		return fmt.Errorf("non-200 response from %s: %d", url, resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
+		return fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	var rawTasks []map[string]interface{}
 	if err := json.Unmarshal(body, &rawTasks); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
+		return fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
 
-	var tasks []payload.CreateTaskRequest
 	for _, rawTask := range rawTasks {
 		task, err := mapToTask(rawTask)
 		if err != nil {
 			logger.Error("Error mapping task: %v", err)
 			continue
 		}
-		tasks = append(tasks, payload.CreateTaskRequest{
-			ExternalID: task.ExternalID,
-			Name:       task.Name,
-			Duration:   task.Duration,
-			Difficulty: task.Difficulty,
-			Provider:   task.Provider,
-		})
+		wp.SubmitTask(task)
 	}
 
-	return tasks, nil
+	return nil
 }
 
 func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
 	var task payload.CreateTaskRequest
 
-	// Handle provider1 format
 	if zorluk, ok := raw["zorluk"]; ok {
 		id, idOk := raw["id"].(float64)
 		sure, sureOk := raw["sure"].(float64)
@@ -116,7 +137,6 @@ func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
 		}, nil
 	}
 
-	// Handle provider2 format
 	if value, ok := raw["value"]; ok {
 		id, idOk := raw["id"].(float64)
 		estimatedDuration, durOk := raw["estimated_duration"].(float64)

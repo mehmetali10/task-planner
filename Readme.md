@@ -18,14 +18,15 @@ TO-DO
 - [ ] dockerfile oluştur
 - [x] project structure uygun olsun
 - [x] main.go
+- [ ] schedule algoritma geliştirmesi
 - [ ] her bir endpointi test et
 - [ ] unit testler yaz
 
 ## Cli
 - [] cobra cli altyapısı oluştur
 - [x] provider alım yapısını kur
-- [] worker pool yapısı kullanılabilir
-- [] fetcher & manipulater use channels here
+- [x] worker pool yapısı kullanılabilir
+- [x] fetcher & manipulater use channels here
 - [] dockerfile
 
 ## Web
