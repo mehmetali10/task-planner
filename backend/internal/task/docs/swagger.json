@@ -1,0 +1,331 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a Task. Planner store API with CRUD operations.",
+        "title": "Task. Planner Store API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/developers": {
+            "get": {
+                "description": "Retrieve a list of developers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "developer"
+                ],
+                "summary": "List developers",
+                "responses": {
+                    "200": {
+                        "description": "List of developers",
+                        "schema": {
+                            "$ref": "#/definitions/payload.ListDevelopersResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/task": {
+            "post": {
+                "description": "Create a new task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "Create a task",
+                "parameters": [
+                    {
+                        "description": "Create Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payload.CreateTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created task",
+                        "schema": {
+                            "$ref": "#/definitions/payload.CreateTaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks": {
+            "get": {
+                "description": "Retrieve a list of tasks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "List tasks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tasks",
+                        "schema": {
+                            "$ref": "#/definitions/payload.ListTasksResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/schedule": {
+            "post": {
+                "description": "Automatically schedule assignments for tasks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "Schedule assignments",
+                "responses": {
+                    "200": {
+                        "description": "Scheduled assignments",
+                        "schema": {
+                            "$ref": "#/definitions/payload.ScheduleAssignmentResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "payload.Assignment": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "developer": {
+                    "$ref": "#/definitions/payload.Developer"
+                },
+                "developerId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "task": {
+                    "$ref": "#/definitions/payload.Task"
+                },
+                "taskId": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "payload.CreateTaskRequest": {
+            "type": "object",
+            "required": [
+                "difficulty",
+                "duration",
+                "externalId",
+                "name",
+                "provider"
+            ],
+            "properties": {
+                "difficulty": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 1
+                },
+                "duration": {
+                    "type": "integer",
+                    "maximum": 1000,
+                    "minimum": 1
+                },
+                "externalId": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "provider": {
+                    "type": "string",
+                    "maxLength": 150,
+                    "minLength": 3
+                }
+            }
+        },
+        "payload.CreateTaskResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "payload.Developer": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "payload.ListDevelopersResponse": {
+            "type": "object",
+            "properties": {
+                "developers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.Developer"
+                    }
+                }
+            }
+        },
+        "payload.ListTasksResponse": {
+            "type": "object",
+            "properties": {
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.Task"
+                    }
+                }
+            }
+        },
+        "payload.ScheduleAssignmentResponse": {
+            "type": "object",
+            "properties": {
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.Assignment"
+                    }
+                }
+            }
+        },
+        "payload.Task": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "difficulty": {
+                    "type": "integer"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "externalId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

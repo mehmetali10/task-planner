@@ -7,6 +7,8 @@ import (
 
 	"github.com/mehmetali10/task-planner/internal/task/config"
 	"github.com/mehmetali10/task-planner/internal/task/handler"
+	"github.com/mehmetali10/task-planner/internal/task/migrate"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/mehmetali10/task-planner/pkg/log"
 
@@ -33,6 +35,9 @@ func NewServer(handler handler.Handler) *Server {
 }
 
 func (s *Server) Start(addr string) {
+	// Run migrations and seed developers
+	migrate.MigrateAndSeed(s.logger)
+
 	s.setUpRoutes()
 
 	s.httpServer = &http.Server{
@@ -72,4 +77,5 @@ func (s *Server) setUpRoutes() {
 	s.router.HandleFunc("/assignment", s.handler.ScheduleAssaignments()).Methods(http.MethodGet)
 
 	s.router.HandleFunc("/developers", s.handler.ListDevelopers()).Methods(http.MethodGet)
+	s.router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 }

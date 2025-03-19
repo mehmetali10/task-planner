@@ -1,0 +1,220 @@
+definitions:
+  payload.Assignment:
+    properties:
+      createdAt:
+        type: string
+      developer:
+        $ref: '#/definitions/payload.Developer'
+      developerId:
+        type: integer
+      id:
+        type: integer
+      task:
+        $ref: '#/definitions/payload.Task'
+      taskId:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  payload.CreateTaskRequest:
+    properties:
+      difficulty:
+        maximum: 10
+        minimum: 1
+        type: integer
+      duration:
+        maximum: 1000
+        minimum: 1
+        type: integer
+      externalId:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      provider:
+        maxLength: 150
+        minLength: 3
+        type: string
+    required:
+    - difficulty
+    - duration
+    - externalId
+    - name
+    - provider
+    type: object
+  payload.CreateTaskResponse:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+    type: object
+  payload.Developer:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  payload.ListDevelopersResponse:
+    properties:
+      developers:
+        items:
+          $ref: '#/definitions/payload.Developer'
+        type: array
+    type: object
+  payload.ListTasksResponse:
+    properties:
+      tasks:
+        items:
+          $ref: '#/definitions/payload.Task'
+        type: array
+    type: object
+  payload.ScheduleAssignmentResponse:
+    properties:
+      assignments:
+        items:
+          $ref: '#/definitions/payload.Assignment'
+        type: array
+    type: object
+  payload.Task:
+    properties:
+      createdAt:
+        type: string
+      difficulty:
+        type: integer
+      duration:
+        type: integer
+      externalId:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      provider:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  description: This is a Task. Planner store API with CRUD operations.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Task. Planner Store API
+  version: "1.0"
+paths:
+  /developers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of developers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of developers
+          schema:
+            $ref: '#/definitions/payload.ListDevelopersResponse'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: List developers
+      tags:
+      - developer
+  /task:
+    post:
+      consumes:
+      - application/json
+      description: Create a new task
+      parameters:
+      - description: Create Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created task
+          schema:
+            $ref: '#/definitions/payload.CreateTaskResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a task
+      tags:
+      - task
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of tasks
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            $ref: '#/definitions/payload.ListTasksResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: List tasks
+      tags:
+      - task
+  /tasks/schedule:
+    post:
+      consumes:
+      - application/json
+      description: Automatically schedule assignments for tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Scheduled assignments
+          schema:
+            $ref: '#/definitions/payload.ScheduleAssignmentResponse'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Schedule assignments
+      tags:
+      - task
+swagger: "2.0"
