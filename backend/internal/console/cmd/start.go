@@ -52,7 +52,7 @@ var startCmd = &cobra.Command{
 		repo := postgresRepo.NewPostgresRepo()
 
 		// 5. Start Worker Pool
-		wp := NewWorkerPool(2, repo) // 2 workers
+		wp := NewWorkerPool(len(providers), repo) // 2 workers
 		ctx, cancel := context.WithCancel(context.Background())
 		wp.Start(ctx)
 
@@ -121,7 +121,7 @@ func fetchAndProcessTasks(url string, logger log.Logger, wp *WorkerPool) error {
 	}
 
 	for _, rawTask := range rawTasks {
-		task, err := mapToTask(rawTask)
+		task, err := mapToTask(rawTask, url)
 		if err != nil {
 			logger.Error("Error mapping task: %v", err)
 			continue
@@ -133,7 +133,7 @@ func fetchAndProcessTasks(url string, logger log.Logger, wp *WorkerPool) error {
 }
 
 // mapToTask maps raw task data to a CreateTaskRequest
-func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
+func mapToTask(raw map[string]interface{}, provider string) (payload.CreateTaskRequest, error) {
 	var task payload.CreateTaskRequest
 
 	if zorluk, ok := raw["zorluk"]; ok {
@@ -150,7 +150,7 @@ func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
 			Name:       fmt.Sprintf("Task %v", uint(id)),
 			Duration:   int(sure),
 			Difficulty: int(difficulty),
-			Provider:   "provider1",
+			Provider:   provider,
 		}, nil
 	}
 
@@ -168,7 +168,7 @@ func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
 			Name:       fmt.Sprintf("Task %v", uint(id)),
 			Duration:   int(estimatedDuration),
 			Difficulty: int(difficulty),
-			Provider:   "provider2",
+			Provider:   provider,
 		}, nil
 	}
 

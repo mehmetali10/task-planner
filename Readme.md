@@ -23,24 +23,25 @@ TO-DO
 - [ ] unit testler yaz
 
 ## Cli
-- [] cobra cli altyapısı oluştur
+- [x] cobra cli altyapısı oluştur
 - [x] provider alım yapısını kur
 - [x] worker pool yapısı kullanılabilir
 - [x] fetcher & manipulater use channels here
-- [] dockerfile
+- [ ] cobra cli tamamla
+- [ ] dockerfile
 
 ## Web
-- [] Get Tasks
-- [] Get Developers
-- [] Get Assaignments
-- [] Schedule Assaignments
-- [] dockerfile
+- [ ] Get Tasks
+- [ ] Get Developers
+- [ ] Get Assaignments
+- [ ] Schedule Assaignments
+- [ ] dockerfile
 
 ## General
-- [] docker-compose
-- [] document
-- [] ci
-- [] prometheus
+- [ ] docker-compose
+- [ ] document
+- [ ] ci
+- [ ] prometheus
 
 
     {

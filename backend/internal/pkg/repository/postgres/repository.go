@@ -88,21 +88,21 @@ func (p *PostgresRepo) CreateTask(ctx context.Context, req payload.CreateTaskReq
 // ListTasks implements repository.Repository.
 func (p *PostgresRepo) ListTasks(ctx context.Context, req payload.ListTasksRequest) (payload.ListTasksResponse, error) {
 	p.logger.Trace("Listing tasks")
-	resp, err := postgres.Read[payload.ListTasksResponse, tables.Task](ctx, map[string]interface{}{}, req.Limit, req.Offset)
+	tasks, err := postgres.Read[[]payload.Task, tables.Task](ctx, map[string]interface{}{}, req.Limit, req.Offset)
 	if err != nil {
 		p.logger.Error("Failed to list tasks: error=%v", err)
 	}
-	return resp, err
+	return payload.ListTasksResponse{Tasks: tasks}, err
 }
 
 // ListDevelopers implements repository.Repository.
 func (p *PostgresRepo) ListDevelopers(ctx context.Context, req payload.ListDevelopersRequest) (payload.ListDevelopersResponse, error) {
 	p.logger.Trace("Listing developers")
-	resp, err := postgres.Read[payload.ListDevelopersResponse, tables.Developer](ctx, map[string]interface{}{}, 0, 1000)
+	developers, err := postgres.Read[[]payload.Developer, tables.Developer](ctx, map[string]interface{}{}, 10000, 0)
 	if err != nil {
 		p.logger.Error("Failed to list developers: error=%v", err)
 	}
-	return resp, err
+	return payload.ListDevelopersResponse{Developers: developers}, err
 }
 
 // ScheduleAssaignments implements repository.Repository.
