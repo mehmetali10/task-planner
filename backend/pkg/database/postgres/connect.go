@@ -3,26 +3,11 @@ package postgres
 import (
 	"fmt"
 
+	"github.com/mehmetali10/task-planner/internal/task/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
-
-var (
-	host     string
-	port     int
-	user     string
-	password string
-	dbname   string
-)
-
-// func init() {
-// 	host = config.DBHost
-// 	port = config.DBPort
-// 	user = config.DBUser
-// 	password = config.DBPassword
-// 	dbname = config.DBNameSmsQueue
-// }
 
 var DB *gorm.DB
 
@@ -31,7 +16,14 @@ func ConnectToDB() (*gorm.DB, error) {
 		return DB, nil
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		config.GetApp().DBHost,
+		config.GetApp().DBPort,
+		config.GetApp().DBUser,
+		config.GetApp().DBPassword,
+		config.GetApp().DBName,
+	)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "",

@@ -23,17 +23,18 @@ func (p *PostgresRepo) CreateTask(ctx context.Context, req payload.CreateTaskReq
 
 // ListTasks implements repository.Repository.
 func (p *PostgresRepo) ListTasks(ctx context.Context, req payload.ListTasksRequest) (payload.ListTasksResponse, error) {
-	resp, err := postgres.Read[payload.ListTasksResponse, tables.Task](ctx, map[string]interface{}{})
+	resp, err := postgres.Read[payload.ListTasksResponse, tables.Task](ctx, map[string]interface{}{}, req.Limit, req.Offset)
 	return resp, err
 }
 
 // ScheduleAssaignments implements repository.Repository.
 func (p *PostgresRepo) ScheduleAssaignments(ctx context.Context, req payload.ScheduleAssignmentRequest) (payload.ScheduleAssignmentResponse, error) {
-	panic("unimplemented")
+	// panic("unimplemented")
+	return payload.ScheduleAssignmentResponse{}, nil
 }
 
 // ListDevelopers implements repository.Repository.
 func (p *PostgresRepo) ListDevelopers(ctx context.Context, req payload.ListDevelopersRequest) (payload.ListDevelopersResponse, error) {
-	resp, err := postgres.Read[payload.ListDevelopersResponse, tables.Developer](ctx, nil)
+	resp, err := postgres.Read[payload.ListDevelopersResponse, tables.Developer](ctx, map[string]interface{}{}, 0, 1000)
 	return resp, err
 }

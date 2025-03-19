@@ -18,7 +18,6 @@ import (
 // @description This is a Task. Planner store API with CRUD operations.
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
-// @contact.email support@kvstore.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8080

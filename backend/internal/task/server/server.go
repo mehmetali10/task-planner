@@ -67,11 +67,9 @@ func (s *Server) Stop() {
 
 func (s *Server) setUpRoutes() {
 	s.router.HandleFunc("/task", s.handler.CreateTask()).Methods(http.MethodPost)
-	s.router.HandleFunc("/task/{id}", s.handler.GetTask()).Methods(http.MethodGet)
 	s.router.HandleFunc("/tasks", s.handler.ListTasks()).Methods(http.MethodGet)
 
-	s.router.HandleFunc("/assignment", s.handler.ScheduleAssaignments()).Methods(http.MethodPost)
-	s.router.HandleFunc("/assignments", s.handler.ListAssignments()).Methods(http.MethodGet)
+	s.router.HandleFunc("/assignment", s.handler.ScheduleAssaignments()).Methods(http.MethodGet)
 
 	s.router.HandleFunc("/developers", s.handler.ListDevelopers()).Methods(http.MethodGet)
 }
