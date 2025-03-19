@@ -25,7 +25,7 @@ type service struct {
 }
 
 func NewService(repository repository.Repository) Service {
-	logger := log.NewLogger("kvService", config.GetApp().ServiceLogLevel)
+	logger := log.NewLogger("service", config.GetApp().ServiceLogLevel)
 	logger.Trace("Service instance created")
 	return &service{
 		repository: repository,
