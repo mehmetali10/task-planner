@@ -1,23 +1,25 @@
 TO-DO
 
 ## Task Manager
-- [] veri tabanı tabloları oluştur
-- [] payload içeriklerini & validasyonlarını ekle
-- [] repository katmanını geliştir
-- [] repository katmanına test yaz
-- [] servis katmanını geliştir
-- [] servis katmanına test yaz
-- [] handler katmanını geliştir
-- [] server katmanını geliştir
-- [] config katmanını geliştir
-- [] loglar ekle
-- [] http error handling ekle
-- [] metric middleware i ekle
-- [] swagger dökümanı oluştur
-- [] metric endpointi sun
-- [] dockerfile oluştur
-- [] project structure uygun olsun
-- [] main.go
+- [x] veri tabanı tabloları oluştur
+- [x] payload içeriklerini & validasyonlarını ekle
+- [x] repository katmanını geliştir
+- [x] repository katmanına test yaz
+- [x] servis katmanını geliştir
+- [x] servis katmanına test yaz
+- [x] handler katmanını geliştir
+- [x] server katmanını geliştir
+- [x] config katmanını geliştir
+- [x] loglar ekle
+- [x] http error handling ekle
+- [x] metric middleware i ekle
+- [x] swagger dökümanı oluştur
+- [x] metric endpointi sun
+- [ ] dockerfile oluştur
+- [x] project structure uygun olsun
+- [x] main.go
+- [ ] her bir endpointi test et
+- [ ] unit testler yaz
 
 ## Cli
 - [] cobra cli altyapısı oluştur

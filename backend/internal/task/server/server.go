@@ -10,10 +10,10 @@ import (
 	"github.com/mehmetali10/task-planner/internal/task/migrate"
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	"github.com/mehmetali10/task-planner/pkg/log"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/mehmetali10/task-planner/pkg/log"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Server struct {
@@ -78,4 +78,8 @@ func (s *Server) setUpRoutes() {
 
 	s.router.HandleFunc("/developers", s.handler.ListDevelopers()).Methods(http.MethodGet)
 	s.router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
+	s.router.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	}).Methods(http.MethodGet)
 }
