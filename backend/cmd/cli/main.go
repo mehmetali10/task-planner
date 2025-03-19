@@ -3,55 +3,58 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
+	"github.com/mehmetali10/task-planner/internal/pkg/config"
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
 	postgresRepo "github.com/mehmetali10/task-planner/internal/pkg/repository/postgres"
-	"github.com/spf13/cobra"
+	"github.com/mehmetali10/task-planner/internal/task/migrate"
+	"github.com/mehmetali10/task-planner/pkg/log"
 )
 
 func main() {
-	var providers []string
+	logger := log.NewLogger("cli", "debug")
 
-	rootCmd := &cobra.Command{
-		Use:   "task-cli",
-		Short: "CLI for managing tasks",
-		Run: func(cmd *cobra.Command, args []string) {
-			if len(providers) == 0 {
-				log.Fatal("No providers specified. Use the --providers flag to specify provider URLs.")
-			}
-
-			repo := postgresRepo.NewPostgresRepo()
-
-			for _, provider := range providers {
-				tasks, err := fetchTasksFromProvider(provider)
-				if err != nil {
-					log.Printf("Error fetching tasks from provider %s: %v", provider, err)
-					continue
-				}
-
-				for _, task := range tasks {
-					_, err := repo.CreateTask(context.Background(), task)
-					if err != nil {
-						log.Printf("Error creating task in database: %v", err)
-					} else {
-						fmt.Printf("Task created successfully: %+v\n", task)
-					}
-				}
-			}
-		},
+	if err := config.LoadConfig(); err != nil {
+		logger.Fatal(err.Error())
 	}
 
-	rootCmd.Flags().StringSliceVar(&providers, "providers", []string{}, "List of provider URLs to fetch tasks from")
-	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+	migrate.MigrateAndSeed(logger)
+
+	var providers []string = []string{
+		"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-one",
+		"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-two",
 	}
+
+	if len(providers) == 0 {
+		logger.Fatal("No providers specified. Use the --providers flag to specify provider URLs.")
+	}
+
+	repo := postgresRepo.NewPostgresRepo()
+
+	for _, provider := range providers {
+		tasks, err := fetchTasksFromProvider(provider, logger)
+		if err != nil {
+			logger.Error("Error fetching tasks from provider %s: %v", provider, err)
+			continue
+		}
+
+		for _, task := range tasks {
+			_, err := repo.CreateTask(context.Background(), task)
+			if err != nil {
+				logger.Error("Error creating task in database: %v", err)
+			} else {
+				logger.Info("Task created successfully: %+v", task)
+			}
+		}
+	}
+
 }
 
-func fetchTasksFromProvider(url string) ([]payload.CreateTaskRequest, error) {
+func fetchTasksFromProvider(url string, logger log.Logger) ([]payload.CreateTaskRequest, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data from %s: %w", url, err)
@@ -76,7 +79,7 @@ func fetchTasksFromProvider(url string) ([]payload.CreateTaskRequest, error) {
 	for _, rawTask := range rawTasks {
 		task, err := mapToTask(rawTask)
 		if err != nil {
-			log.Printf("Error mapping task: %v", err)
+			logger.Error("Error mapping task: %v", err)
 			continue
 		}
 		tasks = append(tasks, payload.CreateTaskRequest{
@@ -92,26 +95,45 @@ func fetchTasksFromProvider(url string) ([]payload.CreateTaskRequest, error) {
 }
 
 func mapToTask(raw map[string]interface{}) (payload.CreateTaskRequest, error) {
+	var task payload.CreateTaskRequest
+
 	// Handle provider1 format
 	if zorluk, ok := raw["zorluk"]; ok {
+		id, idOk := raw["id"].(float64)
+		sure, sureOk := raw["sure"].(float64)
+		difficulty, diffOk := zorluk.(float64)
+
+		if !idOk || !sureOk || !diffOk {
+			return task, errors.New("type assertion failed for provider1 fields")
+		}
+
 		return payload.CreateTaskRequest{
-			ExternalID: uint(raw["id"].(float64)),
-			Name:       fmt.Sprintf("Task %v", raw["id"]),
-			Duration:   int(raw["sure"].(float64)),
-			Difficulty: int(zorluk.(float64)),
+			ExternalID: uint(id),
+			Name:       fmt.Sprintf("Task %v", uint(id)),
+			Duration:   int(sure),
+			Difficulty: int(difficulty),
 			Provider:   "provider1",
 		}, nil
 	}
 
 	// Handle provider2 format
 	if value, ok := raw["value"]; ok {
+		id, idOk := raw["id"].(float64)
+		estimatedDuration, durOk := raw["estimated_duration"].(float64)
+		difficulty, diffOk := value.(float64)
+
+		if !idOk || !durOk || !diffOk {
+			return task, errors.New("type assertion failed for provider2 fields")
+		}
+
 		return payload.CreateTaskRequest{
-			ExternalID: uint(raw["id"].(float64)),
-			Name:       fmt.Sprintf("Task %v", raw["id"]),
-			Duration:   int(raw["estimated_duration"].(float64)),
-			Difficulty: int(value.(float64)),
+			ExternalID: uint(id),
+			Name:       fmt.Sprintf("Task %v", uint(id)),
+			Duration:   int(estimatedDuration),
+			Difficulty: int(difficulty),
 			Provider:   "provider2",
 		}, nil
 	}
-	return payload.CreateTaskRequest{}, nil
+
+	return task, errors.New("unknown provider format")
 }

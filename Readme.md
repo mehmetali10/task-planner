@@ -23,7 +23,7 @@ TO-DO
 
 ## Cli
 - [] cobra cli altyapısı oluştur
-- [] provider alım yapısını kur
+- [x] provider alım yapısını kur
 - [] worker pool yapısı kullanılabilir
 - [] fetcher & manipulater use channels here
 - [] dockerfile

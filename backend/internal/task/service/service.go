@@ -36,14 +36,14 @@ func NewService(repository repository.Repository) Service {
 // CreateTask implements Service.
 func (s *service) CreateTask(ctx context.Context, req payload.CreateTaskRequest) (payload.CreateTaskResponse, error) {
 	s.logger.Trace(
-		"Creating new task externalId=%s, provider=%s",
+		"Creating new task externalId=%v, provider=%v",
 		req.ExternalID,
 		req.Provider,
 	)
 	resp, err := s.repository.CreateTask(ctx, req)
 	if err != nil {
 		s.logger.Error(
-			"Failed to create task externalId=%s, provider=%s: error=%v",
+			"Failed to create task externalId=%v, provider=%v: error=%v",
 			req.ExternalID,
 			req.Provider,
 			err,
@@ -51,7 +51,7 @@ func (s *service) CreateTask(ctx context.Context, req payload.CreateTaskRequest)
 		return resp, err
 	}
 	s.logger.Trace(
-		"Task created successfully externalId=%s, provider=%s",
+		"Task created successfully externalId=%v, provider=%v",
 		req.ExternalID,
 		req.Provider,
 	)

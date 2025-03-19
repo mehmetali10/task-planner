@@ -27,11 +27,11 @@ func MigrateAndSeed(logger log.Logger) {
 
 	logger.Info("Seeding developers...")
 	developers := []tables.Developer{
-		{FirstName: "DEV1", LastName: "One", Email: "dev1@example.com", Capacity: 1},
-		{FirstName: "DEV2", LastName: "Two", Email: "dev2@example.com", Capacity: 2},
-		{FirstName: "DEV3", LastName: "Three", Email: "dev3@example.com", Capacity: 3},
-		{FirstName: "DEV4", LastName: "Four", Email: "dev4@example.com", Capacity: 4},
-		{FirstName: "DEV5", LastName: "Five", Email: "dev5@example.com", Capacity: 5},
+		{ID: 1, FirstName: "DEV1", LastName: "One", Email: "dev1@example.com", Capacity: 1},
+		{ID: 2, FirstName: "DEV2", LastName: "Two", Email: "dev2@example.com", Capacity: 2},
+		{ID: 3, FirstName: "DEV3", LastName: "Three", Email: "dev3@example.com", Capacity: 3},
+		{ID: 4, FirstName: "DEV4", LastName: "Four", Email: "dev4@example.com", Capacity: 4},
+		{ID: 5, FirstName: "DEV5", LastName: "Five", Email: "dev5@example.com", Capacity: 5},
 	}
 
 	for _, dev := range developers {

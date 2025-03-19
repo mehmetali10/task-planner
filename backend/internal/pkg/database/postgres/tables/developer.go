@@ -9,9 +9,9 @@ import (
 type Developer struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	FirstName string    `gorm:"not null" json:"first_name"`
-	LastName  string    `gorm:"not null" json:"last_name"`
-	Email     string    `gorm:"not null" json:"email"`
 	Capacity  int       `gorm:"not null" json:"capacity"`
+	LastName  string    `json:"last_name"`
+	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

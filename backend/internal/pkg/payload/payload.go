@@ -1,15 +1,17 @@
 package payload
 
+import "time"
+
 type (
 	Task struct {
-		ID         uint64 `json:"id"`
-		ExternalID uint64 `json:"externalId"`
-		Name       string `json:"name"`
-		Duration   int    `json:"duration"`
-		Difficulty int    `json:"difficulty"`
-		Provider   string `json:"provider"`
-		CreatedAt  string `json:"createdAt"`
-		UpdatedAt  string `json:"updatedAt"`
+		ID         uint       `json:"id"`
+		ExternalID uint       `json:"externalId"`
+		Name       string     `json:"name"`
+		Duration   int        `json:"duration"`
+		Difficulty int        `json:"difficulty"`
+		Provider   string     `json:"provider"`
+		CreatedAt  *time.Time `json:"createdAt"`
+		UpdatedAt  *time.Time `json:"updatedAt"`
 	}
 
 	CreateTaskRequest struct {
@@ -20,8 +22,8 @@ type (
 		Provider   string `json:"provider" validate:"required,min=3,max=150"`
 	}
 	CreateTaskResponse struct {
-		ID        uint   `json:"id"`
-		CreatedAt string `json:"createdAt"`
+		ID        uint       `json:"id"`
+		CreatedAt *time.Time `json:"createdAt"`
 	}
 
 	ListTasksRequest struct {
@@ -35,13 +37,13 @@ type (
 
 type (
 	Assignment struct {
-		ID          uint      `json:"id"`
-		TaskID      uint      `json:"taskId"`
-		DeveloperID uint      `json:"developerId"`
-		Task        Task      `json:"task"`
-		Developer   Developer `json:"developer"`
-		CreatedAt   string    `json:"createdAt"`
-		UpdatedAt   string    `json:"updatedAt"`
+		ID          uint       `json:"id"`
+		TaskID      uint       `json:"taskId"`
+		DeveloperID uint       `json:"developerId"`
+		Task        Task       `json:"task"`
+		Developer   Developer  `json:"developer"`
+		CreatedAt   *time.Time `json:"createdAt"`
+		UpdatedAt   *time.Time `json:"updatedAt"`
 	}
 
 	ScheduleAssignmentRequest struct {
@@ -56,12 +58,12 @@ type (
 
 type (
 	Developer struct {
-		ID        uint   `json:"id"`
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
-		Email     string `json:"email"`
-		CreatedAt string `json:"createdAt"`
-		UpdatedAt string `json:"updatedAt"`
+		ID        uint       `json:"id"`
+		FirstName string     `json:"firstName"`
+		LastName  string     `json:"lastName"`
+		Email     string     `json:"email"`
+		CreatedAt *time.Time `json:"createdAt"`
+		UpdatedAt *time.Time `json:"updatedAt"`
 	}
 
 	ListDevelopersRequest  struct{}

@@ -2,6 +2,7 @@ package postgres_repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/mehmetali10/task-planner/pkg/log"
 
@@ -27,6 +28,41 @@ func NewPostgresRepo() repository.Repository {
 // CreateTask implements repository.Repository.
 func (p *PostgresRepo) CreateTask(ctx context.Context, req payload.CreateTaskRequest) (payload.CreateTaskResponse, error) {
 	p.logger.Trace(
+		"Checking if task already exists externalId=%s, provider=%s",
+		req.ExternalID,
+		req.Provider,
+	)
+
+	// Check if a task with the same ExternalID and Provider already exists
+	existingTasks, err := postgres.Read[[]payload.CreateTaskResponse, tables.Task](
+		ctx,
+		map[string]interface{}{
+			"ExternalID": req.ExternalID,
+			"Provider":   req.Provider,
+		},
+		1, // Limit to 1 result
+		0, // Offset
+	)
+	if err != nil {
+		p.logger.Error(
+			"Failed to check existing task externalId=%v, provider=%v: error=%v",
+			req.ExternalID,
+			req.Provider,
+			err,
+		)
+		return payload.CreateTaskResponse{}, err
+	}
+
+	if len(existingTasks) > 0 {
+		p.logger.Warn(
+			"Task already exists externalId=%v, provider=%v",
+			req.ExternalID,
+			req.Provider,
+		)
+		return payload.CreateTaskResponse{}, fmt.Errorf("task with externalId=%v and provider=%v already exists", req.ExternalID, req.Provider)
+	}
+
+	p.logger.Trace(
 		"Creating new task externalId=%s, provider=%s",
 		req.ExternalID,
 		req.Provider,
@@ -34,7 +70,7 @@ func (p *PostgresRepo) CreateTask(ctx context.Context, req payload.CreateTaskReq
 	resp, err := postgres.Create[payload.CreateTaskResponse, tables.Task](ctx, req)
 	if err != nil {
 		p.logger.Error(
-			"Failed to create task externalId=%s, provider=%s: error=%v",
+			"Failed to create task externalId=%v, provider=%v: error=%v",
 			req.ExternalID,
 			req.Provider,
 			err,
@@ -42,7 +78,7 @@ func (p *PostgresRepo) CreateTask(ctx context.Context, req payload.CreateTaskReq
 		return resp, err
 	}
 	p.logger.Trace(
-		"Task created successfully externalId=%s, provider=%s",
+		"Task created successfully externalId=%v, provider=%v",
 		req.ExternalID,
 		req.Provider,
 	)
