@@ -9,13 +9,14 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
+        "termsOfService": "https://swagger.io/terms/",
         "contact": {
-            "name": "API Support"
+            "name": "Mehmet Ali Mergen",
+            "email": "support@taskplanner.com"
         },
         "license": {
             "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "{{.Version}}"
     },
@@ -147,7 +148,7 @@ const docTemplate = `{
             }
         },
         "/tasks/schedule": {
-            "post": {
+            "get": {
                 "description": "Automatically schedule assignments for tasks",
                 "consumes": [
                     "application/json"
@@ -180,26 +181,11 @@ const docTemplate = `{
         "payload.Assignment": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "developer": {
-                    "$ref": "#/definitions/payload.Developer"
-                },
-                "developerId": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "task": {
-                    "$ref": "#/definitions/payload.Task"
-                },
-                "taskId": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
+                "developerTasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.DeveloperTaskAssignment"
+                    }
                 }
             }
         },
@@ -272,6 +258,20 @@ const docTemplate = `{
                 }
             }
         },
+        "payload.DeveloperTaskAssignment": {
+            "type": "object",
+            "properties": {
+                "developer": {
+                    "$ref": "#/definitions/payload.Developer"
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.Task"
+                    }
+                }
+            }
+        },
         "payload.ListDevelopersResponse": {
             "type": "object",
             "properties": {
@@ -302,6 +302,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/payload.Assignment"
                     }
+                },
+                "minDuration": {
+                    "type": "integer"
                 }
             }
         },
@@ -343,8 +346,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Task. Planner Store API",
-	Description:      "This is a Task. Planner store API with CRUD operations.",
+	Title:            "Task Planner API",
+	Description:      "Task Planner API provides endpoints for managing tasks with CRUD operations.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

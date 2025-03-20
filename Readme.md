@@ -39,12 +39,13 @@ TO-DO
 - [ ] dockerfile
 
 ## General
-- [ ] docker-compose
+- [x] docker-compose
 - [ ] document
 - [ ] ci
 - [ ] prometheus
 - [ ] name fixing
 - [ ] data type checking for optimize
+- [ ] migrations
 
 
 docker run --rm -it --network host console:0.0.1 start  

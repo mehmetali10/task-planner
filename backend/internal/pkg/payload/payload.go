@@ -37,23 +37,21 @@ type (
 
 type (
 	Assignment struct {
-		ID          uint       `json:"id"`
-		TaskID      uint       `json:"taskId"`
-		DeveloperID uint       `json:"developerId"`
-		Task        Task       `json:"task"`
-		Developer   Developer  `json:"developer"`
-		CreatedAt   *time.Time `json:"createdAt"`
-		UpdatedAt   *time.Time `json:"updatedAt"`
+		DeveloperTasks []DeveloperTaskAssignment `json:"developerTasks"`
+	}
+
+	DeveloperTaskAssignment struct {
+		Developer Developer `json:"developer"`
+		Tasks     []Task    `json:"tasks"`
 	}
 
 	ScheduleAssignmentRequest struct {
 	}
+
 	ScheduleAssignmentResponse struct {
 		Assignments []Assignment `json:"assignments"`
+		MinDuration int          `json:"minDuration"`
 	}
-
-	ListAssignmentsRequest  struct{}
-	ListAssignmentsResponse struct{}
 )
 
 type (

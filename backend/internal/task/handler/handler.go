@@ -4,14 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
 	"github.com/mehmetali10/task-planner/internal/task/service"
-
-	"github.com/go-playground/validator"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/mehmetali10/task-planner/pkg/validate"
 )
 
 type Handler interface {
@@ -26,65 +22,23 @@ type handler struct {
 	service service.Service
 }
 
-var (
-	requestCount = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "http_requests_total",
-			Help: "Total number of HTTP requests",
-		},
-		[]string{"method", "endpoint", "status"},
-	)
-	requestDuration = prometheus.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Name:    "http_request_duration_seconds",
-			Help:    "Duration of HTTP requests in seconds",
-			Buckets: prometheus.DefBuckets,
-		},
-		[]string{"method", "endpoint"},
-	)
-)
-
-func init() {
-	prometheus.MustRegister(requestCount, requestDuration)
-}
-
 func NewHandler(service service.Service) Handler {
 	return &handler{
 		service: service,
 	}
 }
 
-func metricMiddleware(next http.HandlerFunc, endpoint string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		rec := &statusRecorder{ResponseWriter: w, statusCode: http.StatusOK}
-		next.ServeHTTP(rec, r)
-
-		duration := time.Since(start).Seconds()
-		requestCount.WithLabelValues(r.Method, endpoint, strconv.Itoa(rec.statusCode)).Inc()
-		requestDuration.WithLabelValues(r.Method, endpoint).Observe(duration)
-	}
-}
-
-type statusRecorder struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (rec *statusRecorder) WriteHeader(code int) {
-	rec.statusCode = code
-	rec.ResponseWriter.WriteHeader(code)
-}
-
-func validateRequest(req interface{}) error {
-	validate := validator.New()
-	err := validate.Struct(req)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
+// CreateTaskHandler godoc
+// @Summary Create a task
+// @Description Create a new task
+// @Tags task
+// @Accept json
+// @Produce json
+// @Param request body payload.CreateTaskRequest true "Create Request"
+// @Success 200 {object} payload.CreateTaskResponse "Successfully created task"
+// @Failure 400 {string} string "Invalid request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /task [post]
 func (h *handler) CreateTask() http.HandlerFunc {
 	return metricMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		var req payload.CreateTaskRequest
@@ -93,7 +47,7 @@ func (h *handler) CreateTask() http.HandlerFunc {
 			return
 		}
 
-		if err := validateRequest(req); err != nil {
+		if err := validate.Request(req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -109,6 +63,18 @@ func (h *handler) CreateTask() http.HandlerFunc {
 	}, "/task")
 }
 
+// ListTasksHandler godoc
+// @Summary List tasks
+// @Description Retrieve a list of tasks
+// @Tags task
+// @Accept json
+// @Produce json
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {object} payload.ListTasksResponse "List of tasks"
+// @Failure 400 {string} string "Invalid request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tasks [get]
 func (h *handler) ListTasks() http.HandlerFunc {
 	return metricMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		limit := r.URL.Query().Get("limit")
@@ -119,7 +85,7 @@ func (h *handler) ListTasks() http.HandlerFunc {
 			Offset: strToInt(offset),
 		}
 
-		if err := validateRequest(req); err != nil {
+		if err := validate.Request(req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -135,6 +101,15 @@ func (h *handler) ListTasks() http.HandlerFunc {
 	}, "/tasks")
 }
 
+// ScheduleAssignmentsHandler godoc
+// @Summary Schedule assignments
+// @Description Automatically schedule assignments for tasks
+// @Tags task
+// @Accept json
+// @Produce json
+// @Success 200 {object} payload.ScheduleAssignmentResponse "Scheduled assignments"
+// @Failure 500 {string} string "Internal server error"
+// @Router /tasks/schedule [get]
 func (h *handler) ScheduleAssaignments() http.HandlerFunc {
 	return metricMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		req, err := h.service.ScheduleAssaignments(r.Context(), payload.ScheduleAssignmentRequest{})
@@ -148,6 +123,15 @@ func (h *handler) ScheduleAssaignments() http.HandlerFunc {
 	}, "/tasks/schedule")
 }
 
+// ListDevelopersHandler godoc
+// @Summary List developers
+// @Description Retrieve a list of developers
+// @Tags developer
+// @Accept json
+// @Produce json
+// @Success 200 {object} payload.ListDevelopersResponse "List of developers"
+// @Failure 500 {string} string "Internal server error"
+// @Router /developers [get]
 func (h *handler) ListDevelopers() http.HandlerFunc {
 	return metricMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		req, err := h.service.ListDevelopers(r.Context(), payload.ListDevelopersRequest{})
@@ -159,12 +143,6 @@ func (h *handler) ListDevelopers() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(req)
 	}, "/developers")
-}
-
-func (h *handler) Metrics() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		promhttp.Handler().ServeHTTP(w, r)
-	}
 }
 
 func strToInt(s string) int {

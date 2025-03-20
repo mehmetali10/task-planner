@@ -16,13 +16,14 @@ import (
 	_ "github.com/mehmetali10/task-planner/internal/task/docs"
 )
 
-// @title Task. Planner Store API
+// @title Task Planner API
 // @version 1.0
-// @description This is a Task. Planner store API with CRUD operations.
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
+// @description Task Planner API provides endpoints for managing tasks with CRUD operations.
+// @termsOfService https://swagger.io/terms/
+// @contact.name Mehmet Ali Mergen
+// @contact.email support@taskplanner.com
 // @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.url https://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8080
 func main() {
 	if err := config.LoadConfig(); err != nil {

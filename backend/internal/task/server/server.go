@@ -74,7 +74,7 @@ func (s *Server) setUpRoutes() {
 	s.router.HandleFunc("/task", s.handler.CreateTask()).Methods(http.MethodPost)
 	s.router.HandleFunc("/tasks", s.handler.ListTasks()).Methods(http.MethodGet)
 
-	s.router.HandleFunc("/assignment", s.handler.ScheduleAssaignments()).Methods(http.MethodGet)
+	s.router.HandleFunc("/tasks/schedule", s.handler.ScheduleAssaignments()).Methods(http.MethodGet)
 
 	s.router.HandleFunc("/developers", s.handler.ListDevelopers()).Methods(http.MethodGet)
 	s.router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)

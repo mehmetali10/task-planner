@@ -1,20 +1,10 @@
 definitions:
   payload.Assignment:
     properties:
-      createdAt:
-        type: string
-      developer:
-        $ref: '#/definitions/payload.Developer'
-      developerId:
-        type: integer
-      id:
-        type: integer
-      task:
-        $ref: '#/definitions/payload.Task'
-      taskId:
-        type: integer
-      updatedAt:
-        type: string
+      developerTasks:
+        items:
+          $ref: '#/definitions/payload.DeveloperTaskAssignment'
+        type: array
     type: object
   payload.CreateTaskRequest:
     properties:
@@ -65,6 +55,15 @@ definitions:
       updatedAt:
         type: string
     type: object
+  payload.DeveloperTaskAssignment:
+    properties:
+      developer:
+        $ref: '#/definitions/payload.Developer'
+      tasks:
+        items:
+          $ref: '#/definitions/payload.Task'
+        type: array
+    type: object
   payload.ListDevelopersResponse:
     properties:
       developers:
@@ -85,6 +84,8 @@ definitions:
         items:
           $ref: '#/definitions/payload.Assignment'
         type: array
+      minDuration:
+        type: integer
     type: object
   payload.Task:
     properties:
@@ -108,13 +109,14 @@ definitions:
 host: localhost:8080
 info:
   contact:
-    name: API Support
-  description: This is a Task. Planner store API with CRUD operations.
+    email: support@taskplanner.com
+    name: Mehmet Ali Mergen
+  description: Task Planner API provides endpoints for managing tasks with CRUD operations.
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Task. Planner Store API
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://swagger.io/terms/
+  title: Task Planner API
   version: "1.0"
 paths:
   /developers:
@@ -199,7 +201,7 @@ paths:
       tags:
       - task
   /tasks/schedule:
-    post:
+    get:
       consumes:
       - application/json
       description: Automatically schedule assignments for tasks

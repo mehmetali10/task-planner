@@ -1,15 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a Task. Planner store API with CRUD operations.",
-        "title": "Task. Planner Store API",
-        "termsOfService": "http://swagger.io/terms/",
+        "description": "Task Planner API provides endpoints for managing tasks with CRUD operations.",
+        "title": "Task Planner API",
+        "termsOfService": "https://swagger.io/terms/",
         "contact": {
-            "name": "API Support"
+            "name": "Mehmet Ali Mergen",
+            "email": "support@taskplanner.com"
         },
         "license": {
             "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "1.0"
     },
@@ -140,7 +141,7 @@
             }
         },
         "/tasks/schedule": {
-            "post": {
+            "get": {
                 "description": "Automatically schedule assignments for tasks",
                 "consumes": [
                     "application/json"
@@ -173,26 +174,11 @@
         "payload.Assignment": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "developer": {
-                    "$ref": "#/definitions/payload.Developer"
-                },
-                "developerId": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "task": {
-                    "$ref": "#/definitions/payload.Task"
-                },
-                "taskId": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
+                "developerTasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.DeveloperTaskAssignment"
+                    }
                 }
             }
         },
@@ -265,6 +251,20 @@
                 }
             }
         },
+        "payload.DeveloperTaskAssignment": {
+            "type": "object",
+            "properties": {
+                "developer": {
+                    "$ref": "#/definitions/payload.Developer"
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payload.Task"
+                    }
+                }
+            }
+        },
         "payload.ListDevelopersResponse": {
             "type": "object",
             "properties": {
@@ -295,6 +295,9 @@
                     "items": {
                         "$ref": "#/definitions/payload.Assignment"
                     }
+                },
+                "minDuration": {
+                    "type": "integer"
                 }
             }
         },
