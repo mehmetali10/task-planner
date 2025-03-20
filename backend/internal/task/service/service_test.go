@@ -6,8 +6,8 @@ import (
 
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
 	postgres_repository "github.com/mehmetali10/task-planner/internal/pkg/repository/postgres"
+	"github.com/mehmetali10/task-planner/internal/pkg/testcontainer"
 	"github.com/mehmetali10/task-planner/internal/task/service"
-	"github.com/mehmetali10/task-planner/internal/testcontainer"
 	"github.com/stretchr/testify/require"
 )
 

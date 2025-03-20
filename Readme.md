@@ -39,12 +39,12 @@ TO-DO
 
 ## General
 - [x] docker-compose
+- [x] script & dockerifle placement
 - [ ] document
 - [ ] prometheus
 - [ ] name fixing
 - [ ] data type checking for optimize
 - [ ] migrations
-- [ ] script & dockerifle placement
 
 
 docker run --rm -it --network host console:0.0.1 start  

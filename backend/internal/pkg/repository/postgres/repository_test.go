@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/mehmetali10/task-planner/internal/pkg/payload"
-	"github.com/mehmetali10/task-planner/internal/testcontainer"
+	"github.com/mehmetali10/task-planner/internal/pkg/testcontainer"
 	"github.com/stretchr/testify/require"
 )
 

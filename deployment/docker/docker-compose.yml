@@ -53,7 +53,7 @@ services:
       - postgres
 
   task-planner-frontend:
-    image: task-planner-frontend:0.0.1
+    image: frontend:0.0.1
     container_name: task-planner-frontend-container
     ports:
       - "3000:80"
