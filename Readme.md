@@ -1,5 +1,34 @@
 # Task Planner
 
+## Table of Contents
+1. [What is Task Planner?](#what-is-task-planner)
+2. [Purpose](#purpose)
+3. [System Architecture](#system-architecture)
+   - [1. Console Application (`console`)](#1-console-application-console)
+   - [2. Task Service (`task`)](#2-task-service-task)
+   - [3. Frontend Application (`frontend`)](#3-frontend-application-frontend)
+4. [Technology Stack and Justification](#technology-stack-and-justification)
+5. [Project Structure](#project-structure)
+6. [How to Run Tests](#how-to-run-tests)
+7. [Local Development Setup](#local-development-setup)
+   - [1. Running the Console Application](#1-running-the-console-application)
+   - [2. Running the Task Service](#2-running-the-task-service)
+   - [3. Running the Frontend Application](#3-running-the-frontend-application)
+8. [Running with Docker Compose](#running-with-docker-compose)
+   - [1. Grant Execution Permission to `build.sh`](#1-grant-execution-permission-to-buildsh)
+   - [2. Start Services with Docker Compose](#2-start-services-with-docker-compose)
+   - [3. Running the Console Application](#3-running-the-console-application)
+   - [4. Accessing the Services](#4-accessing-the-services)
+9. [Task Planner API Documentation](#task-planner-api-documentation)
+   - [General Information](#general-information)
+   - [Endpoints](#endpoints)
+     - [1. List Developers](#1-list-developers)
+     - [2. Create a Task](#2-create-a-task)
+     - [3. List Tasks](#3-list-tasks)
+     - [4. Automatically Schedule Tasks](#4-automatically-schedule-tasks)
+
+
+    
 ## What is Task Planner?
 
 Task Planner is a web application designed to efficiently distribute tasks among a team of developers based on their capabilities and workload. It collects task information from multiple external providers and generates an optimized weekly schedule to ensure the fastest possible completion time.
@@ -157,6 +186,20 @@ The project directory structure is as follows:
         ├── reportWebVitals.js
         └── styles.css
    ```
+
+## How to Run Tests
+
+To run tests for the project, follow these steps:
+
+1. Install dependencies:
+   ```bash
+   go mod tidy
+   ```
+2. For all tests across the project, run:
+   ```bash
+   cd backend/ && go test ./...
+   ```
+
 ## Local Development Setup
 
 To run Task Planner locally, follow these steps for each component:
