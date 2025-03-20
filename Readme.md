@@ -32,10 +32,10 @@ TO-DO
 
 
 ## Web
-- [ ] Get Tasks
-- [ ] Get Developers
-- [ ] Schedule Assaignments
-- [ ] dockerfile
+- [x] Get Tasks
+- [x] Get Developers
+- [x] Schedule Assaignments
+- [x] dockerfile
 
 ## General
 - [x] docker-compose
@@ -45,6 +45,7 @@ TO-DO
 - [ ] name fixing
 - [ ] data type checking for optimize
 - [ ] migrations
+- [ ] script & dockerifle placement
 
 
 docker run --rm -it --network host console:0.0.1 start  
@@ -65,3 +66,6 @@ docker run --rm --network host  \
   -e DB_NAME=task \
   -p 8080:8080 \
   task:0.0.1
+
+
+docker-compose run --rm console start      

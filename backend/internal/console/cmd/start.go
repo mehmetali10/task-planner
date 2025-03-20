@@ -53,8 +53,8 @@ var startCmd = &cobra.Command{
 
 func setupEnvironment() {
 	envVars := map[string]string{
-		"DB_HOST": "localhost",
-		// "DB_HOST":     "my_postgres",
+		// "DB_HOST": "localhost",
+		"DB_HOST":     "my_postgres",
 		"DB_PORT":     "5432",
 		"DB_USER":     "postgres",
 		"DB_PASSWORD": "pass",
