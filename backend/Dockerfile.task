@@ -1,0 +1,23 @@
+# Build Stage
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /app
+
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux 
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -trimpath -ldflags="-s -w" -o task ./cmd/task/main.go
+
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=builder /app/task /app/task
+
+ENTRYPOINT ["/app/task"]

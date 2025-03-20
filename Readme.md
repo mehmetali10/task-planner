@@ -15,7 +15,7 @@ TO-DO
 - [x] metric middleware i ekle
 - [x] swagger dökümanı oluştur
 - [x] metric endpointi sun
-- [ ] dockerfile oluştur
+- [x] dockerfile oluştur
 - [x] project structure uygun olsun
 - [x] main.go
 - [ ] schedule algoritma geliştirmesi
@@ -27,8 +27,9 @@ TO-DO
 - [x] provider alım yapısını kur
 - [x] worker pool yapısı kullanılabilir
 - [x] fetcher & manipulater use channels here
-- [ ] cobra cli tamamla
-- [ ] dockerfile
+- [x] cobra cli tamamla
+- [x] dockerfile
+
 
 ## Web
 - [ ] Get Tasks
@@ -46,13 +47,21 @@ TO-DO
 - [ ] data type checking for optimize
 
 
-    {
-        "id": 1,
-        "zorluk": 3,
-        "sure": 5
-    }
-    {
-        "id": 1,
-        "value": 3,
-        "estimated_duration": 4
-    }
+docker run --rm -it --network host console:0.0.1 start  
+
+docker run --rm --network host  \
+  -e HTTP_ADDR=:8080 \
+  -e HANDLER_LOG_LEVEL=debug \
+  -e SERVICE_LOG_LEVEL=debug \
+  -e REPOSITORY_LOG_LEVEL=debug \
+  -e HTTP_SERVER_LOG_LEVEL=debug \
+  -e HTTP_ALLOWED_HEADERS="*" \
+  -e HTTP_ALLOWED_ORIGINS="*" \
+  -e HTTP_ALLOWED_METHODS="GET,POST,PUT,DELETE,OPTIONS" \
+  -e DB_HOST=localhost \
+  -e DB_PORT=5432 \
+  -e DB_USER=postgres \
+  -e DB_PASSWORD=pass \
+  -e DB_NAME=task \
+  -p 8080:8080 \
+  task:0.0.1

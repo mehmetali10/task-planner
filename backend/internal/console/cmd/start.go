@@ -26,41 +26,35 @@ var startCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logger := log.NewLogger("cli", "error")
 
-		// 1. Ortam değişkenlerini al
 		setupEnvironment()
 
-		// 2. Yapılandırmayı yükle
 		if err := config.LoadConfig(); err != nil {
 			logger.Fatal(err.Error())
 		}
 
-		// 3. Migrasyonları çalıştır
 		logger.Info("Running migrations...")
 		migrate.MigrateAndSeed(logger)
 
-		// 4. Sağlayıcıları al
 		providers := getProviders()
 		if len(providers) == 0 {
 			logger.Fatal("No providers specified.")
 		}
 
-		// 5. Repo ve Worker Pool başlat
 		repo := postgresRepo.NewPostgresRepo()
 		wp := worker.NewWorkerPool(len(providers), repo)
 		ctx, cancel := context.WithCancel(context.Background())
 		wp.Start(ctx)
 
-		// 6. Sağlayıcıları işle
 		processProviders(providers, logger, wp)
 
-		// 7. Graceful Shutdown işlemini başlat
 		handleShutdown(cancel, wp, logger)
 	},
 }
 
 func setupEnvironment() {
 	envVars := map[string]string{
-		"DB_HOST":     "localhost",
+		"DB_HOST": "localhost",
+		// "DB_HOST":     "my_postgres",
 		"DB_PORT":     "5432",
 		"DB_USER":     "postgres",
 		"DB_PASSWORD": "pass",
