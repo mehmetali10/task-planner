@@ -1,4 +1,3 @@
-# Build Stage
 FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
@@ -9,10 +8,12 @@ ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux 
 
-COPY go.mod go.sum ./
+COPY ./backend/go.mod ./backend/go.sum ./backend/
+
+WORKDIR /app/backend
 RUN go mod download
 
-COPY . .
+COPY ./backend .
 
 RUN go build -trimpath -ldflags="-s -w" -o console ./cmd/console/main.go
 
@@ -22,6 +23,6 @@ WORKDIR /app
 
 RUN apk add --no-cache ca-certificates
 
-COPY --from=builder /app/console /app/console
+COPY --from=builder /app/backend/console /app/console
 
 ENTRYPOINT ["/app/console"]

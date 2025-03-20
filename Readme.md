@@ -40,7 +40,6 @@ TO-DO
 ## General
 - [x] docker-compose
 - [ ] document
-- [ ] ci
 - [ ] prometheus
 - [ ] name fixing
 - [ ] data type checking for optimize

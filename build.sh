@@ -2,7 +2,7 @@
 
 VERSION="0.0.1"
 
-PARENT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PARENT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "Building Docker images with version $VERSION..."
 
