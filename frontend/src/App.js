@@ -38,6 +38,10 @@ const App = () => {
         ))}
       </div>
 
+      <br />
+      <hr />
+      <br />
+
       <h2>Tasks</h2>
       <div className="task-list">
         {tasks.map(task => (
@@ -48,6 +52,10 @@ const App = () => {
           </div>
         ))}
       </div>
+
+        <br />
+      <hr />
+      <br />
 
       <button onClick={handleSchedule} className="schedule-btn">Schedule Tasks</button>
 
@@ -67,7 +75,10 @@ const AssignmentsSummary = ({ assignments }) => {
       <p>Minimum Weeks Required: {assignments.minWeek}</p>
 
       {assignments.assignments.map((assignment, index) => (
-        <DeveloperTasks key={index} developerTasks={assignment.developerTasks} />
+        <div key={index} className="week-container">
+          <h3>Week {index + 1}</h3>
+          <DeveloperTasks developerTasks={assignment.developerTasks} />
+        </div>
       ))}
     </div>
   );
@@ -79,12 +90,14 @@ const DeveloperTasks = ({ developerTasks }) => {
       {developerTasks.map((devTask, index) => (
         <div key={index} className="developer-task-card">
           <h3>{devTask.developer.firstName} {devTask.developer.lastName}</h3>
-          <p>Email: {devTask.developer.email}</p>
-          <h4>Assigned Tasks:</h4>
+          <p><strong>Email:</strong> {devTask.developer.email}</p>
+          <p><strong>Capacity:</strong> {devTask.developer.capacity}</p>
+          <p><strong>Assigned Tasks:</strong></p>
           <ul>
             {devTask.tasks.map(task => (
               <li key={task.id}>
-                {task.name} - {task.duration} min (Difficulty: {task.difficulty})
+                <strong>{task.name}</strong> - {task.duration}h (Difficulty: {task.difficulty})<br />
+                <small>Provider: {task.provider || "N/A"}</small>
               </li>
             ))}
           </ul>
