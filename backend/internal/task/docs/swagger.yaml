@@ -42,6 +42,8 @@ definitions:
     type: object
   payload.Developer:
     properties:
+      capacity:
+        type: integer
       createdAt:
         type: string
       email:
@@ -84,7 +86,11 @@ definitions:
         items:
           $ref: '#/definitions/payload.Assignment'
         type: array
-      minDuration:
+      minWeek:
+        type: integer
+      totalElapsedWorkHour:
+        type: integer
+      totalWorkDay:
         type: integer
     type: object
   payload.Task:

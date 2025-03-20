@@ -20,7 +20,7 @@ TO-DO
 - [x] main.go
 - [x] schedule algoritma geliştirmesi
 - [x] her bir endpointi test et
-- [ ] unit testler yaz
+- [x] unit testler yaz
 
 ## Cli
 - [x] cobra cli altyapısı oluştur

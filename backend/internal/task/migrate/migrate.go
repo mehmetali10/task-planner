@@ -22,7 +22,7 @@ func MigrateAndSeed() {
 		&tables.Task{},
 		&tables.Developer{},
 	); err != nil {
-		log.Fatal("Migration failed: %v", err)
+		log.Fatalf("Migration failed: %v", err)
 	}
 	log.Print("Database migration completed successfully.")
 

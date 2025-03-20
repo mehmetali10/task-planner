@@ -12,7 +12,6 @@ import (
 )
 
 func TestService(t *testing.T) {
-
 	// Start the PostgreSQL container and perform migrations once before the tests
 	cleanup := testcontainer.StartPostgresContainer(t)
 	defer cleanup()

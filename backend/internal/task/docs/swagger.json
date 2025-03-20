@@ -231,6 +231,9 @@
         "payload.Developer": {
             "type": "object",
             "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -296,7 +299,13 @@
                         "$ref": "#/definitions/payload.Assignment"
                     }
                 },
-                "minDuration": {
+                "minWeek": {
+                    "type": "integer"
+                },
+                "totalElapsedWorkHour": {
+                    "type": "integer"
+                },
+                "totalWorkDay": {
                     "type": "integer"
                 }
             }

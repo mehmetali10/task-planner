@@ -238,6 +238,9 @@ const docTemplate = `{
         "payload.Developer": {
             "type": "object",
             "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -303,7 +306,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/payload.Assignment"
                     }
                 },
-                "minDuration": {
+                "minWeek": {
+                    "type": "integer"
+                },
+                "totalElapsedWorkHour": {
+                    "type": "integer"
+                },
+                "totalWorkDay": {
                     "type": "integer"
                 }
             }
