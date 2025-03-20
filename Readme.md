@@ -34,7 +34,6 @@ TO-DO
 ## Web
 - [ ] Get Tasks
 - [ ] Get Developers
-- [ ] Get Assaignments
 - [ ] Schedule Assaignments
 - [ ] dockerfile
 

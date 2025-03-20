@@ -13,7 +13,10 @@ func MigrateAndSeed() {
 	defer postgres.CloseDB()
 	defer func() {
 		log.Print("Closing database connection...")
-		sqlDB, _ := postgres.DB.DB()
+		sqlDB, err := postgres.DB.DB()
+		if err != nil {
+			log.Fatalf("Failed to get database connection: %v", err)
+		}
 		sqlDB.Close()
 	}()
 
