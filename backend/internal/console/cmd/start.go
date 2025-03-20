@@ -224,7 +224,6 @@ func (wp *WorkerPool) worker(ctx context.Context, workerID int) {
 
 		case <-ctx.Done():
 			wp.logger.Info("Worker %d stopping...", workerID)
-			time.Sleep(time.Millisecond * 100)
 			return
 		}
 	}
@@ -237,6 +236,10 @@ func (wp *WorkerPool) SubmitTask(task payload.CreateTaskRequest) {
 
 // Stop stops the WorkerPool
 func (wp *WorkerPool) Stop() {
+	wp.logger.Info("Stopping worker pool... Waiting for remaining tasks.")
+
+	time.Sleep(time.Second * 2) // Wait for 2 seconds for remaining tasks to finish
+
 	close(wp.taskQueue) // Close the queue, workers will start shutting down
 	wp.wg.Wait()        // Wait for all workers to finish
 }

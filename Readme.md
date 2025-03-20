@@ -19,7 +19,7 @@ TO-DO
 - [x] project structure uygun olsun
 - [x] main.go
 - [ ] schedule algoritma geliştirmesi
-- [ ] her bir endpointi test et
+- [x] her bir endpointi test et
 - [ ] unit testler yaz
 
 ## Cli
@@ -42,6 +42,8 @@ TO-DO
 - [ ] document
 - [ ] ci
 - [ ] prometheus
+- [ ] name fixing
+- [ ] data type checking for optimize
 
 
     {
