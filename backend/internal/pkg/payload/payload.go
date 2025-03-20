@@ -49,8 +49,10 @@ type (
 	}
 
 	ScheduleAssignmentResponse struct {
-		Assignments []Assignment `json:"assignments"`
-		MinDuration int          `json:"minDuration"`
+		Assignments          []Assignment `json:"assignments"`
+		MinWeek              uint         `json:"minWeek"`
+		TotalWorkDay         uint         `json:"totalWorkDay"`
+		TotalElapsedWorkHour uint         `json:"totalElapsedWorkHour"`
 	}
 )
 
@@ -59,6 +61,7 @@ type (
 		ID        uint       `json:"id"`
 		FirstName string     `json:"firstName"`
 		LastName  string     `json:"lastName"`
+		Capacity  int        `json:"capacity"`
 		Email     string     `json:"email"`
 		CreatedAt *time.Time `json:"createdAt"`
 		UpdatedAt *time.Time `json:"updatedAt"`

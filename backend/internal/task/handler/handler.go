@@ -13,7 +13,7 @@ import (
 type Handler interface {
 	CreateTask() http.HandlerFunc
 	ListTasks() http.HandlerFunc
-	ScheduleAssaignments() http.HandlerFunc
+	ScheduleAssignments() http.HandlerFunc
 	ListDevelopers() http.HandlerFunc
 	Metrics() http.HandlerFunc
 }
@@ -110,9 +110,9 @@ func (h *handler) ListTasks() http.HandlerFunc {
 // @Success 200 {object} payload.ScheduleAssignmentResponse "Scheduled assignments"
 // @Failure 500 {string} string "Internal server error"
 // @Router /tasks/schedule [get]
-func (h *handler) ScheduleAssaignments() http.HandlerFunc {
+func (h *handler) ScheduleAssignments() http.HandlerFunc {
 	return metricMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		req, err := h.service.ScheduleAssaignments(r.Context(), payload.ScheduleAssignmentRequest{})
+		req, err := h.service.ScheduleAssignments(r.Context(), payload.ScheduleAssignmentRequest{})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

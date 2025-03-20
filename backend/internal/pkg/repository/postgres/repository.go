@@ -105,7 +105,7 @@ func (p *PostgresRepo) ListDevelopers(ctx context.Context, req payload.ListDevel
 	return payload.ListDevelopersResponse{Developers: developers}, err
 }
 
-// ScheduleAssaignments implements repository.Repository.
-func (p *PostgresRepo) ScheduleAssaignments(ctx context.Context, req payload.ScheduleAssignmentRequest) (payload.ScheduleAssignmentResponse, error) {
+// ScheduleAssignments implements repository.Repository.
+func (p *PostgresRepo) ScheduleAssignments(ctx context.Context, req payload.ScheduleAssignmentRequest) (payload.ScheduleAssignmentResponse, error) {
 	return payload.ScheduleAssignmentResponse{}, nil
 }
