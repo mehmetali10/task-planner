@@ -18,7 +18,7 @@ TO-DO
 - [x] dockerfile oluştur
 - [x] project structure uygun olsun
 - [x] main.go
-- [ ] schedule algoritma geliştirmesi
+- [x] schedule algoritma geliştirmesi
 - [x] her bir endpointi test et
 - [ ] unit testler yaz
 
