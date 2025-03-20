@@ -36,7 +36,7 @@ func NewServer(handler handler.Handler) *Server {
 
 func (s *Server) Start(addr string) {
 	// Run migrations and seed developers
-	migrate.MigrateAndSeed(s.logger)
+	migrate.MigrateAndSeed()
 
 	s.setUpRoutes()
 

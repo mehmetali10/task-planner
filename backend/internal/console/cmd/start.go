@@ -33,7 +33,7 @@ var startCmd = &cobra.Command{
 		}
 
 		logger.Info("Running migrations...")
-		migrate.MigrateAndSeed(logger)
+		migrate.MigrateAndSeed()
 
 		providers := getProviders()
 		if len(providers) == 0 {

@@ -9,8 +9,5 @@ import (
 type Repository interface {
 	CreateTask(ctx context.Context, req payload.CreateTaskRequest) (payload.CreateTaskResponse, error)
 	ListTasks(ctx context.Context, req payload.ListTasksRequest) (payload.ListTasksResponse, error)
-
-	ScheduleAssignments(ctx context.Context, req payload.ScheduleAssignmentRequest) (payload.ScheduleAssignmentResponse, error)
-
 	ListDevelopers(ctx context.Context, req payload.ListDevelopersRequest) (payload.ListDevelopersResponse, error)
 }
