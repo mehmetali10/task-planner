@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
@@ -9,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -27,42 +30,71 @@ var startCmd = &cobra.Command{
 	Short: "Start the task planner application",
 	Long:  `Start the task planner application, run migrations, and process tasks from providers.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger := log.NewLogger("cli", "trace")
+		logger := log.NewLogger("cli", "error")
 
-		// 1. Load configuration
+		// 1. Prompt user for environment variables
+		envVars := map[string]string{
+			"DB_HOST":     "localhost",
+			"DB_PORT":     "5432",
+			"DB_USER":     "postgres",
+			"DB_PASSWORD": "pass",
+			"DB_NAME":     "task",
+		}
+
+		for key, defaultVal := range envVars {
+			value := promptForEnv(key, defaultVal)
+			os.Setenv(key, value)
+		}
+
+		// 2. Load configuration
 		if err := config.LoadConfig(); err != nil {
 			logger.Fatal(err.Error())
 		}
 
-		// 2. Run migrations
+		// 3. Run migrations
 		logger.Info("Running migrations...")
 		migrate.MigrateAndSeed(logger)
 
-		// 3. Define providers
-		providers := []string{
+		// 4. Ask user about default providers
+		defaultProviders := []string{
 			"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-one",
 			"https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/mock-two",
+		}
+
+		useDefaults := promptYesNo(fmt.Sprintf("Do you want to use the default providers?\n 1-) %s\n 2-) %s\n (yes/no)", defaultProviders[0], defaultProviders[1]))
+		var providers []string
+		if useDefaults {
+			providers = append(providers, defaultProviders...)
+		}
+
+		// 5. Ask user for additional providers
+		for {
+			newProvider := promptForInput("Enter a new provider URL (or press Enter to continue):")
+			if newProvider == "" {
+				break
+			}
+			providers = append(providers, newProvider)
 		}
 
 		if len(providers) == 0 {
 			logger.Fatal("No providers specified.")
 		}
 
-		// 4. Initialize repository
+		// 6. Initialize repository
 		repo := postgresRepo.NewPostgresRepo()
 
-		// 5. Start Worker Pool
-		wp := NewWorkerPool(len(providers), repo) // 2 workers
+		// 7. Start Worker Pool
+		wp := NewWorkerPool(len(providers), repo) // Dynamic worker count
 		ctx, cancel := context.WithCancel(context.Background())
 		wp.Start(ctx)
 
-		// 6. Create a channel for OS signals
+		// 8. Create a channel for OS signals
 		sigChan := make(chan os.Signal, 1)
 		signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
 		var wg sync.WaitGroup
 
-		// 7. Run providers in parallel
+		// 9. Run providers in parallel
 		wg.Add(len(providers))
 		for _, provider := range providers {
 			go func(provider string) {
@@ -74,17 +106,17 @@ var startCmd = &cobra.Command{
 			}(provider)
 		}
 
-		// 8. After all providers are processed, stop the workers
+		// 10. After all providers are processed, stop the workers
 		go func() {
-			wg.Wait() // Wait for providers to finish
+			wg.Wait()
 			logger.Info("All providers processed, waiting for workers to finish...")
-			wp.Stop() // Stop the workers
-			cancel()  // Cancel the context
+			wp.Stop()
+			cancel()
 			logger.Info("Worker pool fully stopped. Exiting application.")
-			os.Exit(0) // Exit when all tasks are done
+			os.Exit(0)
 		}()
 
-		// 9. Graceful shutdown when receiving OS signal
+		// 11. Graceful shutdown when receiving OS signal
 		<-sigChan
 		logger.Info("Received termination signal, shutting down...")
 		cancel()
@@ -92,6 +124,55 @@ var startCmd = &cobra.Command{
 
 		logger.Info("Application terminated gracefully.")
 	},
+}
+
+func promptForEnv(key, defaultVal string) string {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Printf("Enter value for %s (default: %s): ", key, defaultVal)
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		if input == "" {
+			return defaultVal
+		}
+
+		if isValidEnvVar(key, input) {
+			return input
+		}
+
+		fmt.Println("Invalid value. Please enter a valid input.")
+	}
+}
+
+func isValidEnvVar(key, value string) bool {
+	switch key {
+	case "DB_PORT":
+		_, err := strconv.Atoi(value)
+		return err == nil
+	default:
+		return len(value) > 0
+	}
+}
+
+func promptForInput(message string) string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print(message)
+	input, _ := reader.ReadString('\n')
+	return strings.TrimSpace(input)
+}
+
+func promptYesNo(message string) bool {
+	for {
+		input := promptForInput(message + " ")
+		input = strings.ToLower(input)
+		if input == "yes" || input == "y" || input == "" {
+			return true
+		} else if input == "no" || input == "n" {
+			return false
+		}
+		fmt.Println("Please enter 'yes' or 'no'.")
+	}
 }
 
 func init() {
@@ -190,7 +271,7 @@ func NewWorkerPool(workerNum int, repo repository.Repository) *WorkerPool {
 		taskQueue: make(chan payload.CreateTaskRequest, 100), // 100 buffer size
 		workerNum: workerNum,
 		repo:      repo,
-		logger:    log.NewLogger("worker-pool", "trace"),
+		logger:    log.NewLogger("worker-pool", "error"),
 	}
 }
 
@@ -206,12 +287,12 @@ func (wp *WorkerPool) Start(ctx context.Context) {
 func (wp *WorkerPool) worker(ctx context.Context, workerID int) {
 	defer wp.wg.Done() // Remove from WaitGroup when worker finishes
 
-	wp.logger.Trace("Worker %d started...", workerID)
+	wp.logger.Error("Worker %d started...", workerID)
 	for {
 		select {
 		case task, ok := <-wp.taskQueue:
 			if !ok {
-				wp.logger.Trace("Worker %d: Task queue closed, exiting...", workerID)
+				wp.logger.Error("Worker %d: Task queue closed, exiting...", workerID)
 				return
 			}
 

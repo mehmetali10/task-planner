@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -48,7 +47,6 @@ func NewLogger(component string, level string) Logger {
 	baseLogger := logrus.New()
 	baseLogger.SetLevel(logrus.InfoLevel)
 
-	fmt.Printf("component: %v || level: %v || logLevel: %v\n", component, level, llevel)
 	baseLogger.SetFormatter(&logrus.JSONFormatter{})
 	lg.logger = baseLogger.WithField("component", component)
 	lg.SetLogLevel(llevel)
