@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/mehmetali10/task-planner/internal/pkg/config"
-	"github.com/mehmetali10/task-planner/internal/task/migrate"
+	"github.com/mehmetali10/task-planner/internal/pkg/migrate"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"

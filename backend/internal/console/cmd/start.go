@@ -12,8 +12,8 @@ import (
 	pvd "github.com/mehmetali10/task-planner/internal/console/provider"
 	"github.com/mehmetali10/task-planner/internal/console/worker"
 	"github.com/mehmetali10/task-planner/internal/pkg/config"
+	"github.com/mehmetali10/task-planner/internal/pkg/migrate"
 	postgresRepo "github.com/mehmetali10/task-planner/internal/pkg/repository/postgres"
-	"github.com/mehmetali10/task-planner/internal/task/migrate"
 	"github.com/mehmetali10/task-planner/pkg/log"
 
 	"github.com/spf13/cobra"

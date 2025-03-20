@@ -28,8 +28,8 @@ func (s *service) ScheduleAssignments(ctx context.Context, req payload.ScheduleA
 	}
 
 	// Constants for weekly work hours and days
-	const weeklyWorkHours = 4
-	const workDaysInWeek = 5 // 5 workdays per week
+	const weeklyWorkHours = 45 // 45 hours per week
+	const workDaysInWeek = 5   // 5 workdays per week
 	assignments := []payload.Assignment{}
 	totalWeeks := 0
 	totalElapsedWorkHour := 0.0
