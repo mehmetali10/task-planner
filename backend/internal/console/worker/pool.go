@@ -1,4 +1,4 @@
-package main
+package worker
 
 import (
 	"context"
@@ -19,13 +19,13 @@ type WorkerPool struct {
 	logger    log.Logger
 }
 
-// Create a new Worker Pool
+// NewWorkerPool creates a new Worker Pool
 func NewWorkerPool(workerNum int, repo repository.Repository) *WorkerPool {
 	return &WorkerPool{
 		taskQueue: make(chan payload.CreateTaskRequest, 100), // 100 buffer size
 		workerNum: workerNum,
 		repo:      repo,
-		logger:    log.NewLogger("worker-pool", "trace"),
+		logger:    log.NewLogger("worker-pool", "error"),
 	}
 }
 
@@ -41,12 +41,12 @@ func (wp *WorkerPool) Start(ctx context.Context) {
 func (wp *WorkerPool) worker(ctx context.Context, workerID int) {
 	defer wp.wg.Done() // Remove from WaitGroup when worker finishes
 
-	wp.logger.Trace("Worker %d started...", workerID)
+	wp.logger.Error("Worker %d started...", workerID)
 	for {
 		select {
 		case task, ok := <-wp.taskQueue:
 			if !ok {
-				wp.logger.Trace("Worker %d: Task queue closed, exiting...", workerID)
+				wp.logger.Error("Worker %d: Task queue closed, exiting...", workerID)
 				return
 			}
 
@@ -59,19 +59,22 @@ func (wp *WorkerPool) worker(ctx context.Context, workerID int) {
 
 		case <-ctx.Done():
 			wp.logger.Info("Worker %d stopping...", workerID)
-			time.Sleep(time.Millisecond * 100)
 			return
 		}
 	}
 }
 
-// Function to submit a task
+// SubmitTask submits a task to the WorkerPool
 func (wp *WorkerPool) SubmitTask(task payload.CreateTaskRequest) {
 	wp.taskQueue <- task
 }
 
-// Stop the WorkerPool
+// Stop stops the WorkerPool
 func (wp *WorkerPool) Stop() {
+	wp.logger.Info("Stopping worker pool... Waiting for remaining tasks.")
+
+	time.Sleep(time.Second * 2) // Wait for 2 seconds for remaining tasks to finish
+
 	close(wp.taskQueue) // Close the queue, workers will start shutting down
 	wp.wg.Wait()        // Wait for all workers to finish
 }
